@@ -1,26 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import Header from '../components/Header'
+import React from 'react';
+import { connect } from 'react-redux';
 import Search from '../components/Search'
 import Categories from '../components/Categories'
 import Carrusel from '../components/Carrusel'
 import CarruselItem from '../components/CarruselItem'
-import Footer from '../components/Footer'
-import useInitialState from '../hooks/useInitialState'
 import "../assets/styles/App.scss"
 
-const API = 'http://localhost:3000/initalState';
 
-const App = () => {
-  const initalState = useInitialState(API);
-  return initalState.length === 0 ? <h1>Loading...</h1> : (
-    <div className="App">
-      <Header />
+const Home = ({myList, trends, originals}) => {
+  return (
+    <>
       <Search />
-      {initalState.mylist.length > 0 &&
+      {myList.length > 0 &&
         <Categories title="Mi lista">
           <Carrusel>
-            {initalState.mylist.map(item => 
-              <CarruselItem key={item.id} {...item} />
+            {myList.map(item => 
+              <CarruselItem 
+              key={item.id} 
+              {...item} 
+              isList
+              />
             )}
           </Carrusel> 
         </Categories> 
@@ -28,7 +27,7 @@ const App = () => {
       
       <Categories title="Tendencias">
         <Carrusel>
-          {initalState.trends.map(item =>
+          {trends.map(item =>
             <CarruselItem key={item.id} {...item}/>  
           )}
         </Carrusel> 
@@ -36,15 +35,21 @@ const App = () => {
 
       <Categories title="Originales de Platzi">
         <Carrusel>
-          {initalState.originals.map(item =>
+          {originals.map(item =>
             <CarruselItem key={item.id} {...item}/>  
           )}
         </Carrusel> 
       </Categories>
-      
-      <Footer />
-    </div>
+    </>
   );
 };
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    myList: state.myList,
+    trends: state.trends,
+    originals: state.originals
+  }
+}
+
+export default connect(mapStateToProps, null)(Home);
